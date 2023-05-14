@@ -1,0 +1,31 @@
+{
+  "name": "currency-transfer-form",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vuelidate/core": "^2.0.2",
+    "@vuelidate/validators": "^2.0.2",
+    "axios": "^1.4.0",
+    "decimal.js": "^10.4.3",
+    "notiwind": "^2.0.1",
+    "vite-svg-loader": "^4.0.0",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@types/vuelidate": "^0.7.18",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.23",
+    "prettier-plugin-tailwindcss": "^0.2.8",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vue-tsc": "^1.4.2"
+  }
+}

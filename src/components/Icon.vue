@@ -1,0 +1,15 @@
+<script setup lang="ts">
+  import { defineAsyncComponent } from 'vue';
+
+  interface IconProps {
+    name: string;
+  }
+
+  const props = defineProps<IconProps>();
+
+  const icon = defineAsyncComponent(() => import(`../assets/svg/${props.name}.svg`));
+</script>
+
+<template>
+  <component :is="icon" class="fill-current" />
+</template>
