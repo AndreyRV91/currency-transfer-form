@@ -39,34 +39,48 @@
   import BaseButton from './BaseButton.vue';
   import BaseInput from './BaseInput.vue';
   import BaseCombobox, { ComboboxItem } from './BaseCombobox.vue';
-  import { notify } from 'notiwind';
 
   import { useVuelidate } from '@vuelidate/core';
   import { required, helpers } from '@vuelidate/validators';
-  import { Currency, User } from '../types';
+  import { Currency, User, TransferResponse, TransferRequestBody } from '../types';
   import useFetch from '../composables/useFetch';
   import { checkDecimalPrecision, isFirstGreater, generateDecimalHintString } from '../utils';
-
-  const { data: currencies, setData: setCurrencies } = useFetch<Currency>('/currencies');
-  setCurrencies();
-
-  const { data: allUsers, setData: setUsers } = useFetch<User>('/users');
-  setUsers();
 
   const amount = ref('0');
   const sender = ref<ComboboxItem | null>(null);
   const recepient = ref<ComboboxItem | null>(null);
   const currency = ref<ComboboxItem | null>(null);
 
+  const { data: currencies, fetchData: setCurrencies } = useFetch<Array<Currency>>({
+    url: '/currencies',
+    method: 'GET',
+  });
+  setCurrencies();
+
+  const { data: allUsers, fetchData: setUsers } = useFetch<Array<User>>({
+    url: '/users',
+    method: 'GET',
+  });
+  setUsers();
+
+  const {
+    data: transferData,
+    fetchData: makeTransfer,
+    isLoading: isSubmitting,
+  } = useFetch<Array<TransferResponse>, TransferRequestBody>({
+    url: '/transfers/make-transfer',
+    method: 'POST',
+  });
+
   const decimals = computed(() => {
-    return currencies.value.find((cur) => cur.id === currency.value?.id)?.decimals;
+    return currencies.value?.find((cur) => cur.id === currency.value?.id)?.decimals;
   });
 
   const maxAmount = computed(() => {
     if (!currency.value || !sender.value) {
       return '';
     }
-    const senderCurrencies = allUsers.value.find((user) => user.id === sender.value?.id)?.currencies;
+    const senderCurrencies = allUsers.value?.find((user) => user.id === sender.value?.id)?.currencies;
     return senderCurrencies ? senderCurrencies[(currency.value.selected as Currency).code] : '';
   });
 
@@ -112,28 +126,20 @@
 
   const v = useVuelidate(rules, { amount, currency, sender, recepient });
 
-  const isSubmitting = ref(false);
   const submitHandler = async () => {
     v.value.$touch();
     if (v.value.$error) {
       return;
     }
 
-    try {
-      isSubmitting.value = true;
-      // TODO post
-    } catch (error) {
-      notify(
-        {
-          group: 'error',
-          title: 'Error',
-          text: 'Error occured',
-        },
-        4000,
-      );
-    } finally {
-      isSubmitting.value = false;
-    }
+    await makeTransfer({
+      currencyId: currency.value?.id ?? 0,
+      fromUserId: sender.value?.id ?? 0,
+      toUserId: recepient.value?.id ?? 0,
+      amount: amount.value ?? '',
+    });
+    console.log('transferData', transferData.value);
+    setUsers();
   };
 
   function toComboboxItem<T extends ComboboxItem>(items: Array<T>): Array<ComboboxItem> {
@@ -153,21 +159,21 @@
   });
 
   const filterUsers = (user: ComboboxItem | null): Array<User> => {
-    let filteredUsers = allUsers.value.filter((usr) => usr.id !== user?.id);
-    const currenyCode = currencies.value.find((cur) => cur.id === currency.value?.id)?.code;
+    let filteredUsers = allUsers.value?.filter((usr) => usr.id !== user?.id) || [];
+    const currenyCode = currencies.value?.find((cur) => cur.id === currency.value?.id)?.code;
     if (currenyCode) {
-      filteredUsers = filteredUsers.filter((user) => Object.keys(user.currencies).includes(String(currenyCode)));
+      filteredUsers = filteredUsers?.filter((user) => Object.keys(user.currencies).includes(String(currenyCode)));
     }
     return filteredUsers;
   };
 
   const filterCurrency = (user: ComboboxItem | null): Array<Currency> => {
-    if (user?.selected) {
-      return currencies.value.filter((cur) =>
-        Object.keys((user?.selected as User).currencies).includes(String(cur.code)),
-      );
+    if (!user?.selected) {
+      return currencies.value || [];
     }
-    return currencies.value;
+
+    const selected = user?.selected as User;
+    return currencies.value?.filter((cur) => Object.keys(selected.currencies).includes(String(cur.code))) || [];
   };
 </script>
 
