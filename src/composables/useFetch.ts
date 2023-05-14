@@ -21,7 +21,7 @@ export default function useFetch<T, TBody = any>(options: UseFetchOptions): UseF
   const error = ref<string>('');
   const isLoading = ref<boolean>(false);
 
-  const fetchData = async (body: TBody): Promise<void> => {
+  const fetchData = async (body?: TBody): Promise<void> => {
     try {
       isLoading.value = true;
       error.value = '';
