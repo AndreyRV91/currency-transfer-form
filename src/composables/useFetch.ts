@@ -8,6 +8,7 @@ type HttpMethod = 'GET' | 'POST';
 interface UseFetchOptions {
   url: string;
   method: HttpMethod;
+  fetchSuccess?: () => void;
 }
 
 interface UseFetchResult<T, TBody = any> {
@@ -35,9 +36,9 @@ export default function useFetch<T, TBody = any>(options: UseFetchOptions): UseF
         data: body,
       });
       data.value = response.data || null;
+      options.fetchSuccess?.();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.log('err', err);
         const axiosError = err;
         error.value = axiosError.response?.data.message || 'An error occurred';
       } else {

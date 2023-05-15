@@ -19,7 +19,7 @@
       </div>
     </div>
     <ul class="list-none">
-      <li v-for="error of props.errors" :key="error.$uid" class="text-xs italic text-red-500">
+      <li v-for="error of props.errors" :key="error.$uid" class="text-xs text-red-500">
         {{ error.$message }}
       </li>
     </ul>

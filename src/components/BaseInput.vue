@@ -12,11 +12,10 @@
       v-model="inputValue"
       class="block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-4 py-3 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
       @input="updateValue(inputValue)"
-      @keydown="restrictInput"
     />
-    <p v-if="props.hint" class="text-xs italic text-gray-600">{{ props.hint }}</p>
+    <p v-if="props.hint" class="text-xs text-gray-600">{{ props.hint }}</p>
     <ul class="list-none">
-      <li v-for="error of props.errors" :key="error.$uid" class="text-xs italic text-red-500">
+      <li v-for="error of props.errors" :key="error.$uid" class="text-xs text-red-500">
         {{ error.$message }}
       </li>
     </ul>
@@ -24,26 +23,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-
-  const ALLOWED_KEYS = [
-    '.',
-    'Delete',
-    'Backspace',
-    'ArrowLeft',
-    'ArrowRight',
-    'Tab',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '0',
-  ];
+  import { ref, watch } from 'vue';
 
   interface BaseInputProps {
     modelValue: string | number;
@@ -58,7 +38,6 @@
 
   const props = withDefaults(defineProps<BaseInputProps>(), {
     type: 'text',
-    isDecimal: false,
   });
 
   const inputValue = ref<string | number>(props.modelValue);
@@ -67,20 +46,27 @@
     (event: 'update:modelValue', payload: string | number): void;
   }>();
 
+  const formatValue = (value: string): string => {
+    const removeChar = value.replace(/[^\d.]/g, '');
+    return removeChar;
+  };
+
   const updateValue = (value: string | number) => {
-    inputValue.value = value;
-    emit('update:modelValue', value);
-  };
-
-  const restrictInput = (event: KeyboardEvent) => {
-    if (!props.isDecimal) {
-      return;
+    if (props.isDecimal) {
+      inputValue.value = formatValue(String(value));
+    } else {
+      inputValue.value = value;
     }
 
-    if (!ALLOWED_KEYS.includes(event.key)) {
-      event.preventDefault();
-    }
+    emit('update:modelValue', inputValue.value);
   };
+
+  watch(
+    () => props.modelValue,
+    (newInputValue) => {
+      inputValue.value = newInputValue;
+    },
+  );
 </script>
 
 <style scoped></style>

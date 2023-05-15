@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import BaseButton from './BaseButton.vue';
   import BaseInput from './BaseInput.vue';
   import BaseCombobox, { ComboboxItem } from './BaseCombobox.vue';
@@ -45,6 +45,7 @@
   import { Currency, User, TransferResponse, TransferRequestBody } from '../types';
   import useFetch from '../composables/useFetch';
   import { checkDecimalPrecision, isFirstGreater, generateDecimalHintString } from '../utils';
+  import { notify } from 'notiwind';
 
   const amount = ref('0');
   const sender = ref<ComboboxItem | null>(null);
@@ -63,13 +64,19 @@
   });
   setUsers();
 
-  const {
-    data: transferData,
-    fetchData: makeTransfer,
-    isLoading: isSubmitting,
-  } = useFetch<Array<TransferResponse>, TransferRequestBody>({
+  const { fetchData: makeTransfer, isLoading: isSubmitting } = useFetch<Array<TransferResponse>, TransferRequestBody>({
     url: '/transfers/make-transfer',
     method: 'POST',
+    fetchSuccess() {
+      notify(
+        {
+          group: 'success',
+          title: 'Success',
+          text: 'The funds have been successfully transferred.',
+        },
+        4000,
+      );
+    },
   });
 
   const decimals = computed(() => {
@@ -95,14 +102,24 @@
     return hints.join('. ');
   });
 
+  watch(decimals, (newVal) => {
+    if (newVal) {
+      amount.value = generateDecimalHintString(newVal);
+    }
+  });
+
   const mustBePositiveDecimal = (value: string) => {
-    return checkDecimalPrecision(value, decimals.value) && Number(value) > 0;
+    if (decimals.value) {
+      return checkDecimalPrecision(value, decimals.value) && Number(value) > 0;
+    }
+    return true;
   };
 
   const mustBeLessThanMaxAmount = (value: string) => {
     if (maxAmount.value) {
       return isFirstGreater(maxAmount.value, value);
     }
+    return true;
   };
 
   const rules = computed(() => ({
@@ -138,7 +155,6 @@
       toUserId: recepient.value?.id ?? 0,
       amount: amount.value ?? '',
     });
-    console.log('transferData', transferData.value);
     setUsers();
   };
 
