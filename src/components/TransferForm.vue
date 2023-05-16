@@ -36,8 +36,9 @@
 
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
+  import { notify } from 'notiwind';
   import BaseButton from './BaseButton.vue';
-  import BaseInput from './BaseInput.vue';
+  import BaseInput from './BaseInput/BaseInput.vue';
   import BaseCombobox, { ComboboxItem } from './BaseCombobox.vue';
 
   import { useVuelidate } from '@vuelidate/core';
@@ -45,7 +46,6 @@
   import { Currency, User, TransferResponse, TransferRequestBody } from '../types';
   import useFetch from '../composables/useFetch';
   import { checkDecimalPrecision, isFirstGreater, generateDecimalHintString } from '../utils';
-  import { notify } from 'notiwind';
 
   const amount = ref('0');
   const sender = ref<ComboboxItem | null>(null);

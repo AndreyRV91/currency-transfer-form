@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { notify } from 'notiwind';
 import { Ref, ref } from 'vue';
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
+const baseUrl = process.env.VUE_APP_BASE_URL;
 
 type HttpMethod = 'GET' | 'POST';
 interface UseFetchOptions {
