@@ -15,7 +15,7 @@
     />
     <p v-if="props.hint" class="text-xs text-gray-600">{{ props.hint }}</p>
     <ul class="list-none">
-      <li v-for="error of props.errors" :key="error.$uid" class="text-xs text-red-500">
+      <li v-for="error of props.errors" :key="error.$uid" data-testid="error-message" class="text-xs text-red-500">
         {{ error.$message }}
       </li>
     </ul>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import TransferForm from './components/TransferForm.vue';
+  import TransferForm from './components/TransferForm/TransferForm.vue';
   import BaseWrapper from './components/BaseWrapper.vue';
   import NotificationContainer from './components/NotificationContainer.vue';
 </script>

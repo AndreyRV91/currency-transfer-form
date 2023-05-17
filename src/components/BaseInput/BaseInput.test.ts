@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/vue';
+import { render, screen } from '@testing-library/vue';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import BaseInput from './BaseInput.vue';
 
@@ -35,13 +36,14 @@ describe('BaseInput', () => {
     const input = screen.getByRole('textbox');
     expect(input).toHaveValue('');
 
-    await fireEvent.update(input, 'New Value');
+    const newValue = 'New Value';
+    await userEvent.type(input, newValue);
 
-    expect(input).toHaveValue('New Value');
+    expect(input).toHaveValue(newValue);
 
     expect(wrapper.emitted()).toHaveProperty('update:modelValue');
-    expect(wrapper.emitted()['update:modelValue']).toHaveLength(1);
-    expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['New Value']);
+    expect(wrapper.emitted()['update:modelValue']).toHaveLength(newValue.length);
+    expect(wrapper.emitted()['update:modelValue']).toContainEqual([newValue]);
   });
 
   test('formats input value for decimal inputs', async () => {
@@ -55,10 +57,11 @@ describe('BaseInput', () => {
     });
 
     const input = screen.getByRole('textbox');
-    await fireEvent.update(input, '1a2.3b4');
+    await userEvent.type(input, '1a2.3b4');
     expect(input).toHaveValue('12.34');
 
-    await fireEvent.update(input, '1.234');
+    await userEvent.clear(input);
+    await userEvent.type(input, '1.234');
     expect(input).toHaveValue('1.234');
   });
 
