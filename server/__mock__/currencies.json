@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "code": "RUB",
+    "name": "Russian Ruble",
+    "decimals": 3
+  },
+  {
+    "id": 2,
+    "code": "USD",
+    "name": "US Dollar",
+    "decimals": 2
+  },
+  {
+    "id": 3,
+    "code": "EUR",
+    "name": "Euro",
+    "decimals": 2
+  },
+  {
+    "id": 4,
+    "code": "GEL",
+    "name": "Georgian Lari",
+    "decimals": 3
+  },
+  {
+    "id": 5,
+    "code": "KZT",
+    "name": "Kazakh tenge",
+    "decimals": 3
+  }
+]

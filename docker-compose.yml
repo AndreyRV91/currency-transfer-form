@@ -1,4 +1,4 @@
-version: '1'
+version: '1.0'
 
 services:
   frontend:
@@ -8,3 +8,12 @@ services:
       - '3000:3000'
     volumes:
       - ${PWD}:/app
+    depends_on:
+      - api
+  api:
+    build: ./server
+    restart: always
+    ports:
+      - '5555:5000'
+    volumes:
+      - ${PWD}/server:/app

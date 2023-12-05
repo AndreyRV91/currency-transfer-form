@@ -26,7 +26,6 @@ export default function useFetch<T, TBody = any>(options: UseFetchOptions): UseF
     try {
       isLoading.value = true;
       error.value = '';
-
       const response: AxiosResponse<T> = await axios({
         url: `${baseUrl}${options.url}`,
         method: options.method,

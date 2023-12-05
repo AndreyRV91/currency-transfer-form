@@ -64,7 +64,11 @@
   });
   setUsers();
 
-  const { fetchData: makeTransfer, isLoading: isSubmitting } = useFetch<Array<TransferResponse>, TransferRequestBody>({
+  const {
+    data: transferData,
+    fetchData: makeTransfer,
+    isLoading: isSubmitting,
+  } = useFetch<TransferResponse, TransferRequestBody>({
     url: '/transfers/make-transfer',
     method: 'POST',
     fetchSuccess() {
@@ -72,7 +76,7 @@
         {
           group: 'success',
           title: 'Success',
-          text: 'The funds have been successfully transferred.',
+          text: transferData.value?.message,
         },
         4000,
       );

@@ -1,8 +1,8 @@
 # Installation
 
 ```
-$ yarn install
+$ docker compose up
 
-# at localhost:3000 by default.
-$ yarn start
+# at localhost:3000 by default for frontend
+
 ```

@@ -20,4 +20,5 @@ export interface TransferRequestBody {
 export interface TransferResponse {
   transferId: string;
   amount: string;
+  message: string;
 }
